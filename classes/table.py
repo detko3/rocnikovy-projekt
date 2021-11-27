@@ -6,23 +6,26 @@ class Table:
         self._table = []
         self.jokerTurn = False
 
-    def add_new(self, cards, isFirst):
-        return self._check_and_add_new()
+    """pridaj novy set"""
+    def add_new(self, cards):
+        self._table.append(cards)
+        # return self._check_and_add_new()
         #TODO if its first check 51 and cista postupka
 
         # self._table.append(cards)
 
+    """pridaj kartu k dakemu setu"""
     def add_to_existing(self, index, card) -> bool:
         if index >= len(self._table) > 0:
             return self._check_and_add(len(self._table) - 1, card)
 
         return self._check_and_add(index, card)
 
-    def _check_and_add_new(self, cards):
-        #zatial ratam s tym ze to je dobre
-        self._table.append(cards)
-        #moj fancy strom
-        return True
+    # def _check_and_add_new(self, cards):
+    #     #zatial ratam s tym ze to je dobre
+    #     self._table.append(cards)
+    #     #moj fancy strom
+    #     return True
 
     def _check_and_add(self, index, card) -> bool:
         if not len(self._table):
@@ -122,6 +125,8 @@ class Table:
                 return False
             elif c.value != 0 and c.value != card.value:
                 return False
+
+        # TODO som zolik chcem pridat a nie zamenit
 
         """ak ma zolika vymen"""
         for i  in range(0, len(cards)):

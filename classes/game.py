@@ -10,18 +10,26 @@ class Game:
         self.player = Player(self.deck, self.table)
 
     def start(self):
-        while(True):
-            self.table.show_table()
+        while(self.player.hand_size()):
+            print("--- NEXT MOVE ---")
             self.player.take_card()
-            self.player.show_hand()
-            print("MOVE: 0 - drop, 1 - create set, 2 - add to set")
-            move = int(input("move: "))
-            if move == 0:
-                if self.player.drop_card():
+            while(True):
+                print("-----------------")
+                self.table.show_table()
+                self.player.show_hand()
+                self.player.show_custom_hand()
+                print("MOVES: 0 - drop, 1 - create set, 2 - add to set")
+                # try:
+                move = int(input("move: "))
+                # except:
+                #     print("Wrong input")
+                if move == 0:
+                    self.player.drop_card()
                     break
-            elif move == 1:
-                self.player.create_set()
-            elif move == 2:
-                self.player.add_to_set()
-            else:
-                print("Wrong value! try again")
+                elif move == 1:
+                    self.player.create_set()
+                elif move == 2:
+                    self.player.add_to_set()
+                else:
+                    print("Wrong value! try again")
+
