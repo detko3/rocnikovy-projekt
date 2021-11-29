@@ -16,7 +16,7 @@ class Player:
         self._hand = []
         self.moves = 0
         self.fill_hand()
-        self._first_move = False  #TODO nastavit na True
+        self._first_move = True  #TODO nastavit na True
         self._clean_fwd = False
 
     def fill_hand(self):
@@ -74,7 +74,8 @@ class Player:
                 res = self.check_valid_cards(cardSets[i])
                 if res != -1:
                     validCards.append(cardSets[i])
-                    validIndexes.append(sets[i])
+                    for s in sets[i]:
+                        validIndexes.append(s)
                     score += res
 
             if (score >= 51 and self._clean_fwd):
@@ -82,9 +83,8 @@ class Player:
                     """vyloz karty na stol"""
                     self._table.add_new(cards)
                 """odstran karty z ruky"""
-                for indexes in validIndexes:
-                    for index in indexes:
-                        self._hand.pop(index)
+                for index in sorted(validIndexes, reverse=True):
+                    del self._hand[index]
                 self._first_move = False
             else:
                 print("bodov < 51 alebo nie je cista postupka")
@@ -228,8 +228,18 @@ class Player:
 
 
     def add_to_set(self):
+        if len(self._hand) < 2:
+            print("invalid move remains last card")
+            return
 
-        print("add to set")
+        indexTable = int(input("Enter set from table"))
+        indexHand = int(input("Enter card"))
+        if self._table.add_to_existing(indexTable, self._hand[indexHand]):
+            del self._hand[indexHand]
+        else:
+            print("invalid move")
+
+        # TODO zamenim za zolika
 
     def show_hand(self):
         print("HAND: ", end ="")

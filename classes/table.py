@@ -9,10 +9,6 @@ class Table:
     """pridaj novy set"""
     def add_new(self, cards):
         self._table.append(cards)
-        # return self._check_and_add_new()
-        #TODO if its first check 51 and cista postupka
-
-        # self._table.append(cards)
 
     """pridaj kartu k dakemu setu"""
     def add_to_existing(self, index, card) -> bool:
@@ -21,11 +17,6 @@ class Table:
 
         return self._check_and_add(index, card)
 
-    # def _check_and_add_new(self, cards):
-    #     #zatial ratam s tym ze to je dobre
-    #     self._table.append(cards)
-    #     #moj fancy strom
-    #     return True
 
     def _check_and_add(self, index, card) -> bool:
         if not len(self._table):
@@ -34,14 +25,11 @@ class Table:
         if index >= len(self._table):
             index = len(self._table) - 1
 
-        #TODO je JOKER
-
-        #TODO if forward add and sava value
+        """je postupka"""
         isforward = self._add_to_forward(index, card)
         if isforward:
             return True
-
-        #TODO je trojica/pairs
+        """je pair"""
         ispair = self._add_to_pair(index, card)
         if ispair:
             return True
@@ -50,74 +38,103 @@ class Table:
 
     def _add_to_forward(self, index, card):
         cards = self._table[index]
-        """nesmu byt vsetky 3 rovnake mozu byt max 2 zoliky"""
-        if cards[0].value == cards[1].value and cards[1] == cards[2]:
+        symbol = ""
+        counter = -1
+        values = []
+        jokerNum = 0
+
+        for i in range(0, len(cards)):
+            c = cards[i]
+            """karta je zolik"""
+            if c.value == 0:
+                jokerNum += 1
+                if counter != - 1:
+                    counter += 1
+                    values.append(counter)
+            else:
+                """prva karta s hodnotou"""
+                if counter == -1:
+                    counter = c.value
+                    for j in range(0, i):
+                        values.append(counter - i + j)
+                    values.append(counter)
+                    symbol = c.symbol
+                else:
+                    counter += 1
+                    """nie som postupka """
+                    if symbol != c.symbol:
+                        return False
+                    else:
+                        if counter == 14 and c.value != 1:
+                            return False
+                        elif counter != 14 and counter != c.value:
+                            return False
+                        else:
+                            values.append(counter)
+
+        # print(values)
+
+        """nie je postupka"""
+        if values[0] < 1:
+            return False
+        """nie je postupka"""
+        if values[len(values) - 1] > 14:
             return False
 
-        """karta ma iny symbol"""
-        for c in cards:
-            if c.symbol != card.symbol:
+        """karta je zolik"""
+        if card.value == 0:
+            if jokerNum > 2:
                 return False
-
-        # TODO karta je Acko dat use case ci sa da dat na zaciatok alebo koniec moze mat hodnotu 1/14
-
-        """kartu viem ulozit dopredu"""
-        for i in range(0,3):
-            if cards[i].value != 0 and card.value + i + 1 == cards[i].value:
-                cards.insert(0, card)
-                return True
-
-        """kartu vieme pridat na koniec"""
-        for i in range(0, 3):
-            if cards[len(cards) - 1 - i].value != 0 and cards[len(cards) - 1 - i].value + 1 + i == card.value:
+            if values[len(values) - 1] < 13:
                 cards.append(card)
                 return True
+            else:
+                cards.insert(0, card)
+                return True
+        else:
+            """zly symbol"""
+            if card.symbol != symbol:
+                return False
 
-        """karta moze byt zamenena s zolikom"""
-        for i in range(0,len(cards)):
-            """karta je zolik"""
-            if cards[i].value == 0:
-                """karta nie je posledna"""
-                if i < len(cards) - 1:
-                    """nasledujuca karta nie je zolik"""
-                    if cards[i + 1].value != 0:
-                        if cards[i + 1].value == card.value + 1:
-                            cards[i] = card
-                            self.jokerTurn = True
-                            return True
-                        """nasledujuca karta je zolik"""
-                    else:
-                        """karta je prva"""
-                        if i == 0:
-                            if cards[i + 2].value == card.value + 2:
-                                cards[i] = card
-                                self.jokerTurn = True
-                                return True
-                            """karta nie je prva"""
-                        else:
-                            if cards[i - 1].value == card.value - 1:
-                                cards[i] = card
-                                self.jokerTurn = True
-                                return True
-                    """karta je posledna"""
-                else:
-                    """predosla je zolik"""
-                    if cards[i - 1].value == 0:
-                        if cards[i - 2].value + 2 == card.value:
-                            cards[i] = card
-                            self.jokerTurn = True
-                            return True
-                        """predosla nie je zolik"""
-                    else:
-                        if cards[i - 1].value + 1 == card.value:
-                            cards[i] = card
-                            self.jokerTurn = True
-                            return True
+        for i in range(0, len(values)):
+            """mozem zamenit za zolika"""
+            if card.value == values[i] and cards[i].value == 0:
+                cards[i] = card
+                self.jokerTurn = True
+                return True
+            else:
+                """pridat na zaciatok"""
+                if i == 0 and values[i] != 1 and card.value == values[i] - 1:
+                    cards.insert(0, card)
+                    return True
+                """mozem pridat na koniec"""
+                lastI = len(values) - 1
+                if i == lastI:
+                    if values[lastI] == 13 and card.value == 1:
+                        cards.append(card)
+                        return True
+                    elif card.value == values[lastI] + 1:
+                        cards.append(card)
+                        return True
 
         return False
 
     def _add_to_pair(self, index, card):
         cards = self._table[index]
+        joker_num = 0
+
+        """kariet je viac nez 3"""
+        if len(cards) > 3:
+            return False
+        """som zolik"""
+        if card.value == 0:
+            for c in cards:
+                if c.value == 0:
+                    joker_num += 1
+                    if joker_num >= 2:
+                        return False
+            cards.append(card)
+            return True
 
         """znak sa uz nachadza alebo ine cislo"""
         for c in cards:
@@ -125,8 +142,6 @@ class Table:
                 return False
             elif c.value != 0 and c.value != card.value:
                 return False
-
-        # TODO som zolik chcem pridat a nie zamenit
 
         """ak ma zolika vymen"""
         for i  in range(0, len(cards)):
@@ -136,6 +151,7 @@ class Table:
                 return True
 
         cards.append(card)
+        return True
 
     def show_table(self):
         print("TABLE: ")

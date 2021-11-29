@@ -27,10 +27,39 @@ def test1():
     print(player.check_valid_cards(cards7))
 
 
+def test2():
+    table = Table()
+    cards1 = [Card(0, ""), Card(12, "♥"), Card(13, "♥")]
+    cards2 = [Card(0, ""), Card(0, ""), Card(1, "♥")]
+
+    table.add_new(cards1)
+    table.add_new(cards2)
+
+    table.show_table()
+
+    assert table.add_to_existing(0, Card(11, "♦")) == False
+    assert table.add_to_existing(0, Card(10, "♥"))  == True
+    assert table.add_to_existing(0, Card(11, "♥")) == True
+    assert table.add_to_existing(0, Card(0, "")) == True
+    assert table.add_to_existing(0, Card(1, "♥")) == True
+    assert table.add_to_existing(0, Card(8, "♥")) == True
+
+    assert table.add_to_existing(1, Card(0, "")) == False
+    assert table.add_to_existing(1, Card(2, "♥")) == False
+    assert table.add_to_existing(1, Card(1, "♦")) == True
+    assert table.add_to_existing(1, Card(1, "♦")) == False
+    assert table.add_to_existing(1, Card(1, "♣")) == True
+    assert table.add_to_existing(1, Card(1, "♠")) == True
+    assert table.add_to_existing(1, Card(0, "")) == False
+
+    table.show_table()
+
+
 if __name__ == '__main__':
     # card = Card(1, "♠")
     # print(card.to_string())
     # test1()
+    # test2()
 
     game = Game()
     game.start()
