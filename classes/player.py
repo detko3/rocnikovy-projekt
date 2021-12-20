@@ -42,6 +42,13 @@ class Player:
         self._hand.append(self._deck.take_card())
 
     def create_set(self):
+        jokerTurn = self._table.get_joker_turn()
+        isUsedJoker = False
+        """musim pouzit zameneho zolika"""
+        if jokerTurn:
+            self._hand.append(Card(0, ""))
+            print("You need to use {} (JOKER)".format(self.hand_size() - 1))
+
         if len(self._hand) < 4:
             print("lack of cards")
             return
@@ -97,10 +104,18 @@ class Player:
                     self._table.add_new(cardSets[i])
                     for set in sets[i]:
                         validIndexes.append(set)
-                    # validIndexes.append(sets[i])
+                        if jokerTurn:
+                            if set == self.hand_size() - 1:
+                                isUsedJoker = True
+                                self._table.disable_joker_turn()
+                                jokerTurn = False
 
             for index in sorted(validIndexes, reverse=True):
                 del self._hand[index]
+
+            if jokerTurn and not isUsedJoker:
+                self._hand.pop()
+                self._use_joker()
 
 
     def _check_valid_input(self, lst, indexes):
@@ -232,14 +247,44 @@ class Player:
             print("invalid move remains last card")
             return
 
-        indexTable = int(input("Enter set from table"))
-        indexHand = int(input("Enter card"))
-        if self._table.add_to_existing(indexTable, self._hand[indexHand]):
-            del self._hand[indexHand]
+        """musim pouzit zameneneho zolika"""
+        if self._table.get_joker_turn():
+            indexTable = int(input("Enter set from table"))
+            if self._table.add_to_existing(indexTable, Card(0, "")):
+                self._table.disable_joker_turn()
+            else:
+                self._use_joker()
         else:
-            print("invalid move")
+            indexTable = int(input("Enter set from table: "))
+            indexHand = int(input("Enter card: "))
+            if self._table.add_to_existing(indexTable, self._hand[indexHand]):
+                del self._hand[indexHand]
+                if self._table.get_joker_turn():
+                    self._use_joker()
+            else:
+                print("invalid move")
 
-        # TODO zamenim za zolika
+
+    def _use_joker(self):
+        while (True):
+            print("-----------------")
+            self._table.show_table()
+            self.show_hand()
+            self.show_custom_hand()
+            print("JOKER MOVE: 1 - create set, 2 - add to set")
+            # try:
+            move = int(input("move: "))
+            # except:
+            #     print("Wrong input")
+            if move == 1:
+                self.create_set()
+                break
+            elif move == 2:
+                self.add_to_set()
+                break
+            else:
+                print("Wrong value! try again")
+
 
     def show_hand(self):
         print("HAND: ", end ="")
