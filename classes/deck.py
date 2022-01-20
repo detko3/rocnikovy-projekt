@@ -30,8 +30,9 @@ class Deck:
             return self._cards.pop()
 
         # otazka ci miesat karty
-        self._droppedCard.reverse()
+        # self._droppedCard.reverse()
         self._cards = self._droppedCard
+        self.shuffle()
         self._droppedCard = []
         return self._cards.pop()
 
@@ -43,3 +44,10 @@ class Deck:
         for card in self._cards:
             print(card.to_string(), end =", ")
         print()
+
+    def dropped_cards_to_string(self):
+        result = []
+        for card in self._droppedCard:
+            result.append(card.to_string())
+
+        return ' '.join(result)

@@ -17,6 +17,8 @@ def test1():
     cards5 = [Card(13, "♥"), Card(1, "♥"), Card(0, "")]
     cards6 = [Card(0, ""), Card(0, ""), Card(2, "♥")]
     cards7 = [Card(13, "♥"), Card(0, ""), Card(0, "")]
+    cards8 = [Card(1, "♥"), Card(0, ""), Card(0, "")]
+    cards9 = [Card(0, ""), Card(1, "♥"), Card(0, "")]
     # print_cards(cards1)
     print(player.check_valid_cards(cards1))
     print(player.check_valid_cards(cards2))
@@ -25,6 +27,8 @@ def test1():
     print(player.check_valid_cards(cards5))
     print(player.check_valid_cards(cards6))
     print(player.check_valid_cards(cards7))
+    print(player.check_valid_cards(cards8))
+    print(player.check_valid_cards(cards9))
 
 
 def test2():

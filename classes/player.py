@@ -18,6 +18,7 @@ class Player:
         self.fill_hand()
         self._first_move = True  #TODO nastavit na True
         self._clean_fwd = False
+        self._score = 0
 
     def fill_hand(self):
         for i in range (0, 14):
@@ -33,8 +34,8 @@ class Player:
         self._deck.drop_card(self._hand.pop(index))
 
         """ked je prazdna koniec hry"""
-        if len(self._hand):
-            return False
+        # if len(self._hand) == 0:
+        #     return False
         return True
 
 
@@ -44,7 +45,7 @@ class Player:
     def create_set(self):
         if len(self._hand) < 4:
             print("lack of cards")
-            return
+            return False
         """2D pole indexov vylozenych kariet"""
         sets = []
         """2D pole vylozenych karty"""
@@ -89,6 +90,8 @@ class Player:
             else:
                 print("bodov < 51 alebo nie je cista postupka")
                 self._clean_fwd = False
+                """invalidny tah"""
+                return False
 
         else:
             validIndexes = []
@@ -99,8 +102,14 @@ class Player:
                         validIndexes.append(set)
                     # validIndexes.append(sets[i])
 
+            if len(validIndexes) == 0:
+                """ak neodstranujem indexi nespravil som nic co by zmenilo stav"""
+                return False
+
             for index in sorted(validIndexes, reverse=True):
                 del self._hand[index]
+
+        return True
 
 
     def _check_valid_input(self, lst, indexes):
@@ -230,16 +239,20 @@ class Player:
     def add_to_set(self):
         if len(self._hand) < 2:
             print("invalid move remains last card")
-            return
+            return False
 
-        indexTable = int(input("Enter set from table"))
-        indexHand = int(input("Enter card"))
+        indexTable = int(input("Enter set from table: "))
+        indexHand = int(input("Enter card: "))
         if self._table.add_to_existing(indexTable, self._hand[indexHand]):
             del self._hand[indexHand]
+            if self._table.get_joker_turn():
+                self._hand.append(Card(0, ""))
         else:
             print("invalid move")
+            return False
 
-        # TODO zamenim za zolika
+        return True
+
 
     def show_hand(self):
         print("HAND: ", end ="")
@@ -280,3 +293,14 @@ class Player:
     def hand_size(self):
         return len(self._hand)
 
+    def hand_to_string(self):
+        result = []
+        for card in self._hand:
+            result.append(card.to_string())
+        return ' '.join(result)
+
+    def inc_score(self):
+        self._score += 1
+
+    def get_score(self):
+        return self._score

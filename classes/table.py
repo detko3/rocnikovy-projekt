@@ -4,7 +4,7 @@ class Table:
 
     def __init__(self):
         self._table = []
-        self.jokerTurn = False
+        self._jokerTurn = False
 
     """pridaj novy set"""
     def add_new(self, cards):
@@ -19,6 +19,7 @@ class Table:
 
 
     def _check_and_add(self, index, card) -> bool:
+        self._jokerTurn = False
         if not len(self._table):
             return False
 
@@ -100,7 +101,7 @@ class Table:
             """mozem zamenit za zolika"""
             if card.value == values[i] and cards[i].value == 0:
                 cards[i] = card
-                self.jokerTurn = True
+                self._jokerTurn = True
                 return True
             else:
                 """pridat na zaciatok"""
@@ -147,11 +148,14 @@ class Table:
         for i  in range(0, len(cards)):
             if cards[i].value == 0:
                 cards[i] = card
-                self.jokerTurn = True
+                self._jokerTurn = True
                 return True
 
         cards.append(card)
         return True
+
+    def get_joker_turn(self):
+        return self._jokerTurn
 
     def show_table(self):
         print("TABLE: ")
@@ -161,3 +165,13 @@ class Table:
                 print(card.to_string(), end=", ")
             print()
 
+    def table_to_string(self):
+        result = []
+
+        for cards in self._table:
+            tmpSet = []
+            for card in cards:
+                tmpSet.append(card.to_string())
+            result.append(' '.join(tmpSet) + "\n")
+
+        return result
