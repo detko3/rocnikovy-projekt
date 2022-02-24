@@ -4,6 +4,7 @@ from classes.player import Player
 from classes.player import print_cards
 from classes.table import Table
 from classes.game import Game
+from classes.myTest import createCustom
 
 def test1():
     deck = Deck()
@@ -58,12 +59,25 @@ def test2():
 
     table.show_table()
 
+def test3():
+    cards = []
+    for i in range(3,6):
+        cards.append(Card(i, "♥"))
+    cards.append(Card(1, "♥"))
+    cards.append(Card(8, "♥"))
+    cards.append(Card(0, ""))
+    cards.append(Card(0, ""))
+    # cards.append(Card(3, "♥"))
+    created = createCustom(cards)
+    for item in created:
+        print_cards(item)
 
 if __name__ == '__main__':
     # card = Card(1, "♠")
     # print(card.to_string())
     # test1()
     # test2()
+    test3()
 
-    game = Game()
-    game.start()
+    # game = Game()
+    # game.start()
