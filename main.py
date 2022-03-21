@@ -5,6 +5,8 @@ from classes.player import print_cards
 from classes.table import Table
 from classes.game import Game
 from classes.myTest import createCustom
+from classes.myTest import removeFromSet
+from classes.myTest import startCombinigSets
 
 def test1():
     deck = Deck()
@@ -61,16 +63,26 @@ def test2():
 
 def test3():
     cards = []
-    for i in range(3,6):
+    for i in range(1,14):
         cards.append(Card(i, "♥"))
-    cards.append(Card(1, "♥"))
-    cards.append(Card(8, "♥"))
-    cards.append(Card(0, ""))
-    cards.append(Card(0, ""))
+        # cards.append(Card(i, "♦"))
+        # cards.append(Card(i, "♣"))
+        # cards.append(Card(i, "♠"))
+    # cards.append(Card(12, "♥"))
+    # cards.append(Card(13, "♥"))
     # cards.append(Card(3, "♥"))
     created = createCustom(cards)
     for item in created:
         print_cards(item)
+
+    print("----------------------")
+
+    startCombinigSets(created, cards)
+
+    # newS = removeFromSet(Card(1, "♥"), created)
+    # for item in newS:
+    #     print_cards(item)
+
 
 if __name__ == '__main__':
     # card = Card(1, "♠")
@@ -78,6 +90,7 @@ if __name__ == '__main__':
     # test1()
     # test2()
     test3()
+
 
     # game = Game()
     # game.start()
