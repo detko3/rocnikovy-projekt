@@ -1,3 +1,5 @@
+import copy
+
 from classes.card import Card
 from classes.deck import Deck
 from classes.player import Player
@@ -6,7 +8,8 @@ from classes.table import Table
 from classes.game import Game
 from classes.myTest import createCustom
 from classes.myTest import removeFromSet
-from classes.myTest import startCombinigSets
+from classes.myTest import startCombinigSets, fillDict, cardsProbability
+from classes.AItable import AItable
 
 def test1():
     deck = Deck()
@@ -63,7 +66,7 @@ def test2():
 
 def test3():
     cards = []
-    for i in range(1,14):
+    for i in range(1,9):
         cards.append(Card(i, "♥"))
         # cards.append(Card(i, "♦"))
         # cards.append(Card(i, "♣"))
@@ -83,14 +86,76 @@ def test3():
     # for item in newS:
     #     print_cards(item)
 
+def testDict():
+    print("test Dict")
+    cards = []
+    for i in range(1, 6):
+        cards.append(Card(i, "♥"))
+
+    cards.append(Card(1, "♥"))
+    cards.append(Card(9, "♥"))
+    cards.append(Card(9, "♥"))
+    cards.append(Card(1, "♠"))
+
+    probs = [2, 3, 5, 1, 5, 1, 7, 2, 4]
+    values = fillDict(cards, probs)
+    print(values)
+
+    newCards = [[Card(1, "♥"), Card(2, "♥"), Card(3, "♥")]]
+    prob = cardsProbability(newCards, copy.deepcopy(values))
+    print(prob)
+    print(values)
+
+def testAItable():
+    table = AItable()
+    cards = []
+    cards.append(Card(1, "♥"))
+    cards.append(Card(2, "♥"))
+    cards.append(Card(3, "♥"))
+
+    table.add_set_to_table(cards)
+    table.show_table()
+
+    assert table.add_card_to_table(Card(2, "♥")) == False
+    assert table.add_card_to_table(Card(5, "♥")) == False
+    assert table.add_card_to_table(Card(4, "♠")) == False
+    assert table.add_card_to_table(Card(4, "♥")) == True
+
+    cards = []
+    cards.append(Card(11, "♠"))
+    cards.append(Card(12, "♠"))
+    cards.append(Card(13, "♠"))
+
+    table.add_set_to_table(cards)
+    table.show_table()
+
+    assert table.add_card_to_table(Card(1, "♠")) == True
+    assert table.add_card_to_table(Card(5, "♠")) == False
+    assert table.add_card_to_table(Card(10, "♠")) == True
+
+    cards = []
+    cards.append(Card(6, "♥"))
+    cards.append(Card(6, "♦"))
+    cards.append(Card(6, "♠"))
+
+    table.add_set_to_table(cards)
+    table.show_table()
+
+    assert table.add_card_to_table(Card(6, "♦")) == False
+    assert table.add_card_to_table(Card(7, "♦")) == False
+    assert table.add_card_to_table(Card(6, "♣")) == True
+
+    table.show_table()
+
 
 if __name__ == '__main__':
     # card = Card(1, "♠")
     # print(card.to_string())
     # test1()
     # test2()
-    test3()
-
+    # test3()
+    # testDict()
+    testAItable()
 
     # game = Game()
     # game.start()

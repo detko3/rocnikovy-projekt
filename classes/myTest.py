@@ -110,13 +110,18 @@ def containsValueAndSymbol(value, symbol, arr):
 
 def startCombinigSets(allSets, hand):
     # pouzijem allSets[0] este pridat moznost ked nepouzijem allSets[0]
-    newSet = combineSets(allSets[0], allSets[0 + 1: len(allSets)], hand)
+    for i in range(0, len(allSets)):
+        newSet = combineSets(allSets[i], allSets[i + 1: len(allSets)], hand)
+        if isinstance(newSet[0], Card):
+            print("here")
+            newSet = [[newSet]]
     # print(newSet)
-    for first in newSet:
-        for it in first:
-            print_cards(it)
-        print(countCardSet(first))
-        print("/////////////////////////////////////")
+        for first in newSet:
+            for it in first:
+                print_cards(it)
+            print(countCardSet(first))
+            print("/////////////////////////////////////")
+        print("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
 
 def combineSets(currSet, allSets, hand):
     # print("Combine set")
@@ -171,3 +176,46 @@ def countCardSet(cardsSet):
             else:
                 count = count + cards[i].value
     return count
+
+def cardsProbability(cardsSet, valueDict):
+    probability = 1
+    for cards in cardsSet:
+        for card in cards:
+            dictNum = -1
+            if card.symbol == "♠":
+                dictNum = 0
+            elif card.symbol == "♣":
+                dictNum = 1
+            elif card.symbol == "♥":
+                dictNum = 2
+            elif card.symbol == "♦":
+                dictNum = 3
+            probability = probability * valueDict[dictNum][card.value].pop()
+
+    return probability
+
+def fillDict(hand, values):
+    dicts = []
+    for i in range(0, 4):
+        dicts.append({})
+    for i in range(0, len(values)):
+        if isinstance(hand[i], Card):
+            dictNum = -1
+            if hand[i].symbol == "♠":
+                dictNum = 0
+            elif hand[i].symbol == "♣":
+                dictNum = 1
+            elif hand[i].symbol == "♥":
+                dictNum = 2
+            elif hand[i].symbol == "♦":
+                dictNum = 3
+            if hand[i].value in dicts[dictNum]:
+                if dicts[dictNum][hand[i].value][0] > values[i]:
+                    dicts[dictNum][hand[i].value].insert(0, values[i])
+                else:
+                    dicts[dictNum][hand[i].value].append(values[i])
+            else:
+                dicts[dictNum][hand[i].value] = [values[i]]
+    return dicts
+
+

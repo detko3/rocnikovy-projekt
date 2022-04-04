@@ -8,30 +8,46 @@ class AIplayer:
         self._hand = []
         self.moves = 0
         self.fill_hand()
-        self._first_move = True  # TODO nastavit na True
-        self._clean_fwd = False
-        self._score = 0
+        self._first_move = True
 
 
     def fill_hand(self):
         for i in range(0, 14):
             self._hand.append(self._deck.take_card())
+        self._hand.append(-1)
 
 
-    def drop_card(self):
-        index = int(input("index: "))
-        if index >= len(self._hand) > 0:
-            self._deck.drop_card(len(self._hand) - 1)
-        self._deck.drop_card(self._hand.pop(index))
+    def drop_card(self, probability):
+        position = -1
+        value = -1
+        for i in range(0, 14):
+            if isinstance(self._hand[i], Card) and probability[i] > value:
+                value = probability[i]
+                position = i
 
-        """ked je prazdna koniec hry"""
-        # if len(self._hand) == 0:
-        #     return False
-        return True
-
+        self._deck.drop_card(self._hand[position])
+        self._hand[position] = -1
 
     def take_card(self):
-        self._hand.append(self._deck.take_card())
+        for i in range(0, 14):
+            if not isinstance(self._hand[i], Card):
+                self._hand[i] = self._deck.take_card()
+                break
+
+    def add_card(self, probability):
+        position = -1
+        value = -1
+        for i in range(0, 14):
+            if isinstance(self._hand[i], Card) and probability[i] > value:
+                value = probability[i]
+                position = i
+        if self._table.add_card_to_table(self._hand[position]):
+            self._hand[position] = -1
+            return True
+        return False
+
+
+
 
 
     def createCustom(self):
