@@ -1,3 +1,5 @@
+import copy
+
 from .card import Card
 from classes.player import print_cards
 
@@ -32,8 +34,19 @@ def createCustom(cards):
                 hasA = True
         for i in range(0, len(h)):
             allCards += create_forward(h[i], h[i + 1 : len(h)], hasA)
+    #TODO START
+    print("DEBUG 1: ")
+    for h in allCards:
+        print_cards(h)
+    #TODO END
 
     allCards += createPairs(hand)
+
+    # TODO START
+    print("DEBUG 2: ")
+    for h in allCards:
+        print_cards(h)
+    # TODO END
 
     return allCards
 
@@ -72,7 +85,9 @@ def createPairs(hand):
         if containsValue(i, hand[1]):
             usedCards.append(Card(i, hand[1][0].symbol))
         if len(usedCards) == 0:
-            return result
+            # print("END HERE")
+            continue
+            # return result
 
         if containsValue(i, hand[2]):
             usedCards.append(Card(i, hand[2][0].symbol))
@@ -110,18 +125,23 @@ def containsValueAndSymbol(value, symbol, arr):
 
 def startCombinigSets(allSets, hand):
     # pouzijem allSets[0] este pridat moznost ked nepouzijem allSets[0]
+    result = []
     for i in range(0, len(allSets)):
         newSet = combineSets(allSets[i], allSets[i + 1: len(allSets)], hand)
         if isinstance(newSet[0], Card):
-            print("here")
+            # print("here")
             newSet = [[newSet]]
     # print(newSet)
         for first in newSet:
-            for it in first:
-                print_cards(it)
-            print(countCardSet(first))
-            print("/////////////////////////////////////")
-        print("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
+            # for it in first:
+                # print_cards(it)
+            sumOfSet = countCardSet(first)
+            # print(sumOfSet)
+            if sumOfSet >= 51:
+                result.append(first)
+            # print("/////////////////////////////////////")
+        # print("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
+    return result
 
 def combineSets(currSet, allSets, hand):
     # print("Combine set")
@@ -217,5 +237,38 @@ def fillDict(hand, values):
             else:
                 dicts[dictNum][hand[i].value] = [values[i]]
     return dicts
+
+
+def filterCards(custom, hand, prob):
+    print("----------------------------------")
+    for car in custom:
+        print_cards(car)
+    # print(custom)
+    print("----------------------------------")
+    filteredSets = startCombinigSets(custom, hand)
+    dict = fillDict(hand, prob)
+    highestIndex = -1
+    highestNum = -1
+    #TODO DOROBIT MOZNOST KED NIC NEVYHOVUJE
+    for i in range(0, len(filteredSets)):
+        cardsProb = cardsProbability(filteredSets[i], copy.deepcopy(dict))
+        if cardsProb > highestNum:
+            highestNum = cardsProb
+            highestIndex = i
+
+    return filteredSets[highestIndex]
+
+def filterCardsNotFirst(custom, hand, prob):
+    dict = fillDict(hand, prob)
+    highestIndex = -1
+    highestNum = -1
+
+    for i in range(0, len(custom)):
+        cardsProb = cardsProbability([custom[i]], dict)
+        if cardsProb > highestNum:
+            highestNum = cardsProb
+            highestIndex = i
+
+    return custom[highestIndex]
 
 

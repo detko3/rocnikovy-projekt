@@ -10,6 +10,10 @@ from classes.myTest import createCustom
 from classes.myTest import removeFromSet
 from classes.myTest import startCombinigSets, fillDict, cardsProbability
 from classes.AItable import AItable
+from classes.AIgame import AIgame
+
+from classes.unitTests import TestAIplayer
+import unittest
 
 def test1():
     deck = Deck()
@@ -155,7 +159,13 @@ if __name__ == '__main__':
     # test2()
     # test3()
     # testDict()
-    testAItable()
+    # testAItable()
 
     # game = Game()
     # game.start()
+
+    # aigame = AIgame()
+    # aigame.start()
+
+    aiPlayerTest = unittest.TestLoader().loadTestsFromTestCase(TestAIplayer)
+    unittest.TextTestRunner().run(aiPlayerTest)
