@@ -2,6 +2,8 @@
 
 class AItable:
 
+    _table = []
+
     def __init__(self):
         self._table = []
         # for i in range(0, 4):
@@ -61,3 +63,5 @@ class AItable:
                 print(card.to_string(), end=", ")
             print()
 
+    def get_table(self):
+        return self._table

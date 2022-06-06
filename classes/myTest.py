@@ -34,19 +34,7 @@ def createCustom(cards):
                 hasA = True
         for i in range(0, len(h)):
             allCards += create_forward(h[i], h[i + 1 : len(h)], hasA)
-    #TODO START
-    print("DEBUG 1: ")
-    for h in allCards:
-        print_cards(h)
-    #TODO END
-
     allCards += createPairs(hand)
-
-    # TODO START
-    print("DEBUG 2: ")
-    for h in allCards:
-        print_cards(h)
-    # TODO END
 
     return allCards
 
@@ -199,6 +187,7 @@ def countCardSet(cardsSet):
 
 def cardsProbability(cardsSet, valueDict):
     probability = 1
+    valueDictCopy = copy.deepcopy(valueDict)
     for cards in cardsSet:
         for card in cards:
             dictNum = -1
@@ -210,7 +199,8 @@ def cardsProbability(cardsSet, valueDict):
                 dictNum = 2
             elif card.symbol == "♦":
                 dictNum = 3
-            probability = probability * valueDict[dictNum][card.value].pop()
+            # print(dictNum)
+            probability = probability * valueDictCopy[dictNum][card.value].pop()
 
     return probability
 
@@ -240,25 +230,33 @@ def fillDict(hand, values):
 
 
 def filterCards(custom, hand, prob):
-    print("----------------------------------")
-    for car in custom:
-        print_cards(car)
-    # print(custom)
-    print("----------------------------------")
+    # print("----------------------------------")
+    # for car in custom:
+    #     print_cards(car)
+    # # print(custom)
+    # print("----------------------------------")
+
     filteredSets = startCombinigSets(custom, hand)
     dict = fillDict(hand, prob)
     highestIndex = -1
     highestNum = -1
-    #TODO DOROBIT MOZNOST KED NIC NEVYHOVUJE
     for i in range(0, len(filteredSets)):
-        cardsProb = cardsProbability(filteredSets[i], copy.deepcopy(dict))
+        cardsProb = cardsProbability(filteredSets[i], dict)
         if cardsProb > highestNum:
             highestNum = cardsProb
             highestIndex = i
 
-    return filteredSets[highestIndex]
+    if len(filteredSets):
+        return filteredSets[highestIndex]
+    return []
+
 
 def filterCardsNotFirst(custom, hand, prob):
+    # print("----------------------------------")
+    # for car in custom:
+    #     print_cards(car)
+    # # print(custom)
+    # print("----------------------------------")
     dict = fillDict(hand, prob)
     highestIndex = -1
     highestNum = -1
@@ -269,6 +267,9 @@ def filterCardsNotFirst(custom, hand, prob):
             highestNum = cardsProb
             highestIndex = i
 
-    return custom[highestIndex]
+    if len(custom):
+        return custom[highestIndex]
+    else:
+        return []
 
 

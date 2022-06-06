@@ -1,5 +1,6 @@
 from .card import Card
 from .myTest import createCustom, filterCards, filterCardsNotFirst
+from classes.player import print_cards
 
 class AIplayer:
 
@@ -69,15 +70,26 @@ class AIplayer:
 
         if self._first_move:
             setToCreate = filterCards(self._custom, cards, prob)
-            #TODO vyloz karty odstran ich z ruky bude pole poli
+            """vyloz karty odstran ich z ruky bude pole poli ak je prazdne vrati false"""
+            if len(setToCreate) == 0:
+                return False
+
             for setToCreateCards in setToCreate:
                 self._table.add_set_to_table(setToCreateCards)
                 #remove cards from hand
                 self.remove_from_hand(setToCreateCards)
+
+            self._first_move = False
+            self._has_changed = True
+            return True
         else:
             setToCreate = filterCardsNotFirst(self._custom, cards, prob)
-            # TODO vyloz a odstran bude 3jica
+            """vyloz a odstran bude 3jica ak je prazdna vrati false"""
+            if len(setToCreate) == 0:
+                return False
             self.remove_from_hand(setToCreate)
+            self._has_changed = True
+            return True
 
     def remove_from_hand(self, cards):
         for card in cards:
