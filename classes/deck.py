@@ -19,8 +19,8 @@ class Deck:
                 for value in range(1, 14):
                     self._cards.append(Card(value, symbol))
 
-        for i in range(0, 5):
-            self._cards.append(Card(0, ""))
+        # for i in range(0, 5):
+        #     self._cards.append(Card(0, ""))
 
     def shuffle(self):
         random.shuffle(self._cards)

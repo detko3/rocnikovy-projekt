@@ -17,11 +17,11 @@ class Player:
         self.moves = 0
         self.fill_hand()
         self._first_move = True  #TODO nastavit na True
-        self._clean_fwd = False
+        # self._clean_fwd = False
         self._score = 0
 
     def fill_hand(self):
-        for i in range (0, 14):
+        for i in range(0, 14):
             self._hand.append(self._deck.take_card())
 
     # def test_hand(self):
@@ -79,7 +79,7 @@ class Player:
                         validIndexes.append(s)
                     score += res
 
-            if (score >= 51 and self._clean_fwd):
+            if (score >= 51):
                 for cards in validCards:
                     """vyloz karty na stol"""
                     self._table.add_new(cards)
@@ -89,7 +89,6 @@ class Player:
                 self._first_move = False
             else:
                 print("bodov < 51 alebo nie je cista postupka")
-                self._clean_fwd = False
                 """invalidny tah"""
                 return False
 
@@ -131,10 +130,10 @@ class Player:
         return True
 
     def check_valid_cards(self, cards):
-        if self._first_move:
-            forward = self._is_clean_forward(cards)
-        else:
-            forward = self._is_forward(cards)
+        # if self._first_move:
+        #     forward = self._is_clean_forward(cards)
+        # else:
+        forward = self._is_forward(cards)
 
         if forward != -1:
             return forward
@@ -148,92 +147,132 @@ class Player:
         return -1
 
     def _is_forward(self, cards):
-        result = 0
-        jokers_num = 0
-        symbol = ""
-        counter = -1
-        for card in cards:
-            """obsahuje max 2 zolikov"""
-            if card.value == 0:
-                jokers_num += 1
-                if jokers_num > 2:
-                    return -1
-                """zolik nie je na zaciatku"""
-                if counter != -1:
-                    counter += 1
-                """zolik na konci po Acku"""
-                if counter > 14:
-                    return -1
+        symbol = cards[0].symbol
+        first = cards[0].value
+        result = first
+
+        for i in range(1, len(cards)):
+            if cards[i].value != cards[i - 1].value + 1 or cards[i].symbol != symbol:
+                return -1
+            if cards[i].value > 9:
+                result += 10
             else:
-                """maju rovnaky symbol"""
-                if symbol == "":
-                    symbol = card.symbol
-                elif card.symbol != symbol:
-                    return -1
-                """skontroluj hodnoty"""
-                if counter == -1:
-                    """zolik predbehol 1ku"""
-                    if jokers_num > 0 and card.value == 1:
-                        return -1
-                    if jokers_num > 1 and card.value == 2:
-                        return -1
-                    counter = card.value
-                else:
-                    counter += 1
-                    if counter != 14 and card.value != counter:
-                        return -1
-                    """Acko na konci"""
-                    if counter == 14 and card.value != 1:
-                        return -1
-                """spocitaj skore"""
-                if counter >= 10:
-                    result += 10
-                else:
-                    result += card.value
+                result += cards[i].value
+
+        if first == 1 and cards[len(cards) - 1].value == 1:
+            return -1
+
+        if cards[len(cards) - 1].value == 1:
+            result += 9
+
         return result
-
-
-    def _is_clean_forward(self, cards):
-        isClean = True
-        fwdRes = self._is_forward(cards)
-        if fwdRes != -1:
-            for card in cards:
-                if card.value == 0:
-                    isClean = False
-
-            if isClean:
-                self._clean_fwd = True
-        return fwdRes
 
     def _is_pair(self, cards):
-        result = 0
-        symbols = []
-        value = -1
-        joker_num = 0
-        for card in cards:
-            """su max 2 ja zolikovia"""
-            if card.value == 0:
-                joker_num += 1
-                if joker_num > 2:
-                    return -1
+        symbols = [cards[0].symbol]
+        first = cards[0].value
+        result = first
+
+        for i in range(1, len(cards)):
+            if cards[i].symbol in symbols or cards[i].value != first:
+                return -1
+            symbols.append(cards[i].symbol)
+            if cards[i].value > 9:
+                result += 10
             else:
-                """maju rozny symbol"""
-                if card.symbol in symbols:
-                    return -1
-                """maju rovnaku hodnotu"""
-                if value == -1:
-                    value = card.value
-                elif card.value != value:
-                    return -1
-                symbols.append(card.symbol)
-                """ak je Acko tak 10b"""
-                if card.value == 1:
-                    result += 10
-                elif card.value >= 10:
-                    result += 10
-                else:
-                    result += card.value
+                result += cards[i].value
+
+        if first == 1:
+            result *= 10
+
         return result
+
+    # def _is_forward(self, cards):
+    #     result = 0
+    #     jokers_num = 0
+    #     symbol = ""
+    #     counter = -1
+    #     for card in cards:
+    #         """obsahuje max 2 zolikov"""
+    #         if card.value == 0:
+    #             jokers_num += 1
+    #             if jokers_num > 2:
+    #                 return -1
+    #             """zolik nie je na zaciatku"""
+    #             if counter != -1:
+    #                 counter += 1
+    #             """zolik na konci po Acku"""
+    #             if counter > 14:
+    #                 return -1
+    #         else:
+    #             """maju rovnaky symbol"""
+    #             if symbol == "":
+    #                 symbol = card.symbol
+    #             elif card.symbol != symbol:
+    #                 return -1
+    #             """skontroluj hodnoty"""
+    #             if counter == -1:
+    #                 """zolik predbehol 1ku"""
+    #                 if jokers_num > 0 and card.value == 1:
+    #                     return -1
+    #                 if jokers_num > 1 and card.value == 2:
+    #                     return -1
+    #                 counter = card.value
+    #             else:
+    #                 counter += 1
+    #                 if counter != 14 and card.value != counter:
+    #                     return -1
+    #                 """Acko na konci"""
+    #                 if counter == 14 and card.value != 1:
+    #                     return -1
+    #             """spocitaj skore"""
+    #             if counter >= 10:
+    #                 result += 10
+    #             else:
+    #                 result += card.value
+    #     return result
+
+
+    # def _is_clean_forward(self, cards):
+    #     isClean = True
+    #     fwdRes = self._is_forward(cards)
+    #     if fwdRes != -1:
+    #         for card in cards:
+    #             if card.value == 0:
+    #                 isClean = False
+    #
+    #         if isClean:
+    #             self._clean_fwd = True
+    #     return fwdRes
+
+    # def _is_pair(self, cards):
+    #     result = 0
+    #     symbols = []
+    #     value = -1
+    #     joker_num = 0
+    #     for card in cards:
+    #         """su max 2 ja zolikovia"""
+    #         if card.value == 0:
+    #             joker_num += 1
+    #             if joker_num > 2:
+    #                 return -1
+    #         else:
+    #             """maju rozny symbol"""
+    #             if card.symbol in symbols:
+    #                 return -1
+    #             """maju rovnaku hodnotu"""
+    #             if value == -1:
+    #                 value = card.value
+    #             elif card.value != value:
+    #                 return -1
+    #             symbols.append(card.symbol)
+    #             """ak je Acko tak 10b"""
+    #             if card.value == 1:
+    #                 result += 10
+    #             elif card.value >= 10:
+    #                 result += 10
+    #             else:
+    #                 result += card.value
+    #     return result
 
 
     def add_to_set(self):
@@ -245,8 +284,8 @@ class Player:
         indexHand = int(input("Enter card: "))
         if self._table.add_to_existing(indexTable, self._hand[indexHand]):
             del self._hand[indexHand]
-            if self._table.get_joker_turn():
-                self._hand.append(Card(0, ""))
+            # if self._table.get_joker_turn():
+            #     self._hand.append(Card(0, ""))
         else:
             print("invalid move")
             return False
@@ -263,16 +302,16 @@ class Player:
 
     def show_custom_hand(self):
         print("CUSTOM HAND: ")
-        jokers = []
+        # jokers = []
         heart = []
         spade = []
         diamond = []
         club = []
         for i in range(0,len(self._hand)):
             card = (i, self._hand[i])
-            if card[1].value == 0:
-                jokers.append(card)
-            elif card[1].symbol == "♥":
+            # if card[1].value == 0:
+            #     jokers.append(card)
+            if card[1].symbol == "♥":
                 heart.append(card)
             elif card[1].symbol == "♠":
                 spade.append(card)
@@ -281,7 +320,7 @@ class Player:
             elif card[1].symbol == "♣":
                 club.append(card)
 
-        hand = [jokers, heart, spade, diamond, club]
+        hand = [heart, spade, diamond, club]
         for h in hand:
             if len(h):
                 print("    ", end="")

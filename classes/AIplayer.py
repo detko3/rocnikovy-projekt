@@ -16,6 +16,7 @@ class AIplayer:
         self._has_changed = True
         self._custom = []
         self._score  = 0
+        self._handSize = 15
 
 
     def fill_hands(self):
@@ -44,6 +45,8 @@ class AIplayer:
         self._has_changed = True
 
     def add_card(self, probability):
+        if self._handSize == 1:
+            return False
         position = -1
         value = -1
         for i in range(0, 15):
@@ -52,10 +55,13 @@ class AIplayer:
                 position = i
         if self._table.add_card_to_table(self._hand[position]):
             self._hand[position] = -1
+            self._handSize = self._handSize - 1
             return True
         return False
 
     def create_new_set(self, probability):
+        if self._handSize <= 3:
+            return False
         prob = []
         # hand without -1 cards
         cards = []
@@ -77,6 +83,7 @@ class AIplayer:
             for setToCreateCards in setToCreate:
                 self._table.add_set_to_table(setToCreateCards)
                 #remove cards from hand
+                self._handSize = self._handSize - len(setToCreate)
                 self.remove_from_hand(setToCreateCards)
 
             self._first_move = False
@@ -87,6 +94,7 @@ class AIplayer:
             """vyloz a odstran bude 3jica ak je prazdna vrati false"""
             if len(setToCreate) == 0:
                 return False
+            self._handSize = self._handSize - len(setToCreate)
             self.remove_from_hand(setToCreate)
             self._has_changed = True
             return True
@@ -141,7 +149,7 @@ class AIplayer:
                 print()
 
     def hand_size(self):
-        return len(self._hand)
+        return self._handSize
 
     def get_score(self):
         return self._score

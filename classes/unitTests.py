@@ -145,4 +145,4 @@ class TestAIplayer(TestCase):
         self.assertTrue(res4)
         self.assertFalse(res5)
 
-        table.show_table()
+        # table.show_table()

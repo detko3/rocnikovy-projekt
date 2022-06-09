@@ -161,11 +161,11 @@ if __name__ == '__main__':
     # testDict()
     # testAItable()
 
-    # game = Game()
-    # game.start()
+    game = Game()
+    game.start()
 
     # aigame = AIgame()
     # aigame.start()
 
-    aiPlayerTest = unittest.TestLoader().loadTestsFromTestCase(TestAIplayer)
-    unittest.TextTestRunner().run(aiPlayerTest)
+    # aiPlayerTest = unittest.TestLoader().loadTestsFromTestCase(TestAIplayer)
+    # unittest.TextTestRunner().run(aiPlayerTest)
