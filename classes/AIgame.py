@@ -19,6 +19,7 @@ class AIgame:
                 self.table.show_table()
                 self.player.show_hand()
                 self.player.show_custom_hand()
+                # TODO prerobit na AI
                 print("MOVES: 0 - drop, 1 - create set, 2 - add to set")
                 move = int(input("move: "))
                 if move == 0:
